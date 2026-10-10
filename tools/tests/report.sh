@@ -1,32 +1,35 @@
 #!/bin/bash
 
-FAIL="$1"
-HTTP1="$2"
-HTTP2="$3"
+CONFIG_FAIL="${1:-1}"
+PORT_FAIL="${2:-1}"
+HTTP1="${3:-0}"
+HTTP2="${4:-0}"
 
-printf "\n%-20s | %-10s\n" "LANE / TEST" "RESULT"
-printf -- "---------------------+------------\n"
+echo
+echo "========== SELFTEST REPORT =========="
 
-printf "%-20s | %-10s\n" \
-    "Pre-flight Configs" \
-    "$([ "$FAIL" -eq 0 ] && echo PASS || echo FAIL)"
+if [ "$CONFIG_FAIL" -eq 0 ]; then
+    echo "[PASS] Pre-flight Configs"
+else
+    echo "[FAIL] Pre-flight Configs"
+fi
 
-printf "%-20s | %-10s\n" \
-    "HTTP/1.1 (/health)" \
-    "$([ "$HTTP1" = "200" ] && echo PASS || echo FAIL)"
+if [ "$PORT_FAIL" -eq 0 ]; then
+    echo "[PASS] Listening Ports"
+else
+    echo "[FAIL] Listening Ports"
+fi
 
-printf "%-20s | %-10s\n" \
-    "h2c gRPC (/health)" \
-    "$([ "$HTTP2" = "200" ] && echo PASS || echo FAIL)"
+if [ "$HTTP1" = "200" ]; then
+    echo "[PASS] HTTP Smoke Test"
+else
+    echo "[FAIL] HTTP Smoke Test (HTTP ${HTTP1})"
+fi
 
-echo -e "\n==== UNVERIFIED ITEMS ===="
-echo "1. gRPC serviceName path shape: Verify if proxies accept -grpc or -grpc/Tun."
-echo "   Fix: Test with real client. Adjust HAProxy regex if needed."
-echo "2. XHTTP wire paths downgrade: Verify if XHTTP works over downgraded HTTP/1.1."
-echo "   Fix: Monitor Cloud Run logs during XHTTP client connection."
-echo "3. Cleartext h1 to h2c auto-upgrade in HAProxy 2.x on Debian Bookworm."
-echo "   Fix: Test 'curl --http2-prior-knowledge' against HAProxy port directly."
-echo "4. OVPN Bridge setup: Lacks remote VM OpenVPN target integration."
-echo "   Fix: Provision external VM and inject details to bridge-ovpn.json."
-echo "5. Sing-box array merge order: Verify if chain.json loads first."
-echo "   Fix: sing-box merge /tmp/out.json -C /etc/singbox/conf && cat /tmp/out.json"
+if [ "$HTTP2" = "200" ]; then
+    echo "[PASS] HTTPS/Upstream Smoke Test"
+else
+    echo "[FAIL] HTTPS/Upstream Smoke Test (HTTP ${HTTP2})"
+fi
+
+echo "========== FIX ME! =========="
