@@ -1,0 +1,12 @@
+{
+  // ==== VLESS CHAIN ====
+  "outbounds": [
+    {
+      "type": "vless", "tag": "chain-vless",
+      "server": "__EXIT_IP__", "server_port": "__EXIT_PORT__",
+      "uuid": "__EXIT_PASS__",
+      "tls": {"enabled": true, "insecure": false},
+      "transport": {"type": "ws", "path": "__EXIT_PATH__"}
+    }
+  ]
+}
