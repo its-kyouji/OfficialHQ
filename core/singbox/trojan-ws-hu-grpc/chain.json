@@ -1,0 +1,12 @@
+{
+  // ==== TROJAN CHAIN ====
+  "outbounds": [
+    {
+      "type": "trojan", "tag": "chain-trojan",
+      "server": "__EXIT_IP__", "server_port": "__EXIT_PORT__",
+      "password": "__EXIT_PASS__",
+      "tls": {"enabled": true, "insecure": false},
+      "transport": {"type": "ws", "path": "__EXIT_PATH__"}
+    }
+  ]
+}
