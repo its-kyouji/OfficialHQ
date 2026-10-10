@@ -1,0 +1,1 @@
+-F -R -p 127.0.0.1:2200 -K 60 -b /app/core/dropbear/banner.txt
