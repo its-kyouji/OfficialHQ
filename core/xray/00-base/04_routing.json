@@ -1,0 +1,19 @@
+{
+  // ==== ROUTING ====
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "port": "443",
+        "network": "udp",
+        "outboundTag": "block"
+      }
+    ]
+  }
+}
