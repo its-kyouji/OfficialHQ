@@ -1,0 +1,29 @@
+{
+  // ==== VMESS INBOUNDS ====
+  "inbounds": [
+    {
+      "tag": "vmess-ws-in", "port": 10005, "listen": "127.0.0.1", "protocol": "vmess",
+      "settings": { "clients": [{"id": "__UUID__", "alterId": 0}] },
+      "streamSettings": { "network": "ws", "wsSettings": {"path": "__BASE_PATH__-x-vmess-ws"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "vmess-hu-in", "port": 10006, "listen": "127.0.0.1", "protocol": "vmess",
+      "settings": { "clients": [{"id": "__UUID__", "alterId": 0}] },
+      "streamSettings": { "network": "httpupgrade", "httpupgradeSettings": {"path": "__BASE_PATH__-x-vmess-hu"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "vmess-xh-in", "port": 10007, "listen": "127.0.0.1", "protocol": "vmess",
+      "settings": { "clients": [{"id": "__UUID__", "alterId": 0}] },
+      "streamSettings": { "network": "xhttp", "xhttpSettings": {"path": "__BASE_PATH__-x-vmess-xh", "mode": "auto"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "vmess-grpc-in", "port": 10008, "listen": "127.0.0.1", "protocol": "vmess",
+      "settings": { "clients": [{"id": "__UUID__", "alterId": 0}] },
+      "streamSettings": { "network": "grpc", "grpcSettings": {"serviceName": "__BASE_PATH__-x-vmess-grpc"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    }
+  ]
+}
