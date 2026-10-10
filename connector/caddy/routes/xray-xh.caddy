@@ -1,0 +1,27 @@
+# ====================
+# XRAY XHTTP ROUTING
+# ====================
+
+handle __BASE_PATH__-x-vless-xh* {
+    reverse_proxy 127.0.0.1:10003 {
+        flush_interval -1
+    }
+}
+
+handle __BASE_PATH__-x-vmess-xh* {
+    reverse_proxy 127.0.0.1:10007 {
+        flush_interval -1
+    }
+}
+
+handle __BASE_PATH__-x-trojan-xh* {
+    reverse_proxy 127.0.0.1:10011 {
+        flush_interval -1
+    }
+}
+
+handle __BASE_PATH__-x-ss-xh* {
+    reverse_proxy 127.0.0.1:10015 {
+        flush_interval -1
+    }
+}
