@@ -1,0 +1,10 @@
+{
+  // ==== VMESS CHAIN ====
+  "outbounds": [
+    {
+      "tag": "chain-vmess", "protocol": "vmess",
+      "settings": { "vnext": [{"address": "__EXIT_IP__", "port": "__EXIT_PORT__", "users": [{"id": "__EXIT_PASS__", "alterId": 0}]}] },
+      "streamSettings": { "network": "ws", "security": "__EXIT_SEC__", "tlsSettings": {"allowInsecure": false}, "wsSettings": {"path": "__EXIT_PATH__"} }
+    }
+  ]
+}
