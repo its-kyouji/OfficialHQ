@@ -10,7 +10,7 @@ mkdir -p /etc/xray/conf
 cp "${APP_DIR}/core/xray/00-base/"*.json \
   /etc/xray/conf/ 2>/dev/null || true
 
-for d in "${APP_DIR}"/core/xray/*+*/; do
+for d in "${APP_DIR}"/core/xray/*-*/; do
   [ -d "$d" ] || continue
 
   n="$(basename "$d")"
@@ -18,7 +18,7 @@ for d in "${APP_DIR}"/core/xray/*+*/; do
   cp "$d/inbounds.json" \
     "/etc/xray/conf/20_${n}_inbounds.json"
 
-  if [ -n "$EXIT_IP" ] && [ "${n%%+*}" = "$EXIT_PROTO" ]; then
+  if [ -n "$EXIT_IP" ] && [ "${n%%-*}" = "$EXIT_PROTO" ]; then
     cp "$d/chain.json" \
       "/etc/xray/conf/30_${n}_chain.json"
   fi
@@ -31,7 +31,7 @@ mkdir -p /etc/singbox/conf
 cp "${APP_DIR}/core/singbox/00-base/"*.json \
   /etc/singbox/conf/ 2>/dev/null || true
 
-for d in "${APP_DIR}"/core/singbox/*+*/; do
+for d in "${APP_DIR}"/core/singbox/*-*/; do
   [ -d "$d" ] || continue
 
   n="$(basename "$d")"
@@ -39,7 +39,7 @@ for d in "${APP_DIR}"/core/singbox/*+*/; do
   cp "$d/inbounds.json" \
     "/etc/singbox/conf/20_${n}_inbounds.json"
 
-  if [ -n "$EXIT_IP" ] && [ "${n%%+*}" = "$EXIT_PROTO" ]; then
+  if [ -n "$EXIT_IP" ] && [ "${n%%-*}" = "$EXIT_PROTO" ]; then
     cp "$d/chain.json" \
       "/etc/singbox/conf/30_${n}_chain.json"
   fi
