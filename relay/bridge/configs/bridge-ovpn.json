@@ -1,0 +1,6 @@
+{
+  "listen_port": 2224,
+  "target_host": "",
+  "target_port": 1194,
+  "label": "OVPN"
+}
