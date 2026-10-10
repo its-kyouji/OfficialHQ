@@ -1,0 +1,29 @@
+{
+  // ==== TROJAN INBOUNDS ====
+  "inbounds": [
+    {
+      "tag": "trojan-ws-in", "port": 10009, "listen": "127.0.0.1", "protocol": "trojan",
+      "settings": { "clients": [{"password": "__IN_PASS__"}] },
+      "streamSettings": { "network": "ws", "wsSettings": {"path": "__BASE_PATH__-x-trojan-ws"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "trojan-hu-in", "port": 10010, "listen": "127.0.0.1", "protocol": "trojan",
+      "settings": { "clients": [{"password": "__IN_PASS__"}] },
+      "streamSettings": { "network": "httpupgrade", "httpupgradeSettings": {"path": "__BASE_PATH__-x-trojan-hu"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "trojan-xh-in", "port": 10011, "listen": "127.0.0.1", "protocol": "trojan",
+      "settings": { "clients": [{"password": "__IN_PASS__"}] },
+      "streamSettings": { "network": "xhttp", "xhttpSettings": {"path": "__BASE_PATH__-x-trojan-xh", "mode": "auto"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    },
+    {
+      "tag": "trojan-grpc-in", "port": 10012, "listen": "127.0.0.1", "protocol": "trojan",
+      "settings": { "clients": [{"password": "__IN_PASS__"}] },
+      "streamSettings": { "network": "grpc", "grpcSettings": {"serviceName": "__BASE_PATH__-x-trojan-grpc"} },
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls", "quic", "fakedns"] }
+    }
+  ]
+}
