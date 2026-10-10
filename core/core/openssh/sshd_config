@@ -1,0 +1,27 @@
+# ==== LISTENER CONFIGURATION ====
+Port 2201
+ListenAddress 127.0.0.1
+
+# ==== HOST KEYS ====
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# ==== AUTHENTICATION ====
+PasswordAuthentication yes
+PermitEmptyPasswords no
+
+# ==== FORWARDING & TUNNELING ====
+AllowTcpForwarding yes
+GatewayPorts yes
+X11Forwarding no
+PermitTunnel yes
+AllowAgentForwarding no
+
+# ==== CONNECTION LIMITS ====
+MaxStartups 100:30:500
+
+# ==== CONNECTION KEEPALIVE ====
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 3
