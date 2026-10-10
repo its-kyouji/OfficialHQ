@@ -1,0 +1,6 @@
+{
+  // ==== LOGGING ====
+  "log": {
+    "loglevel": "debug"
+  }
+}
