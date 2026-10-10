@@ -1,0 +1,40 @@
+{
+  // ==== ROUTING (CLOUD RUN SAFE) ====
+  "route": {
+    "rules": [
+      {
+        "inbound": [
+          "s-vless-ws-in",
+          "s-vless-hu-in",
+          "s-vless-grpc-in",
+          "s-vmess-ws-in",
+          "s-vmess-hu-in",
+          "s-vmess-grpc-in",
+          "s-trojan-ws-in",
+          "s-trojan-hu-in",
+          "s-trojan-grpc-in"
+        ],
+        "action": "sniff"
+      },
+      {
+        "ip_cidr": [
+          "10.0.0.0/8",
+          "172.16.0.0/12",
+          "192.168.0.0/16",
+          "127.0.0.0/8"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "network": "udp",
+        "port": 443,
+        "action": "reject"
+      }
+    ],
+    "default_domain_resolver": {
+      "server": "local"
+    },
+    "final": "direct",
+    "auto_detect_interface": false
+  }
+}
