@@ -1,0 +1,10 @@
+{
+  // ==== TROJAN CHAIN ====
+  "outbounds": [
+    {
+      "tag": "chain-trojan", "protocol": "trojan",
+      "settings": { "servers": [{"address": "__EXIT_IP__", "port": "__EXIT_PORT__", "password": "__EXIT_PASS__"}] },
+      "streamSettings": { "network": "ws", "security": "__EXIT_SEC__", "tlsSettings": {"allowInsecure": false}, "wsSettings": {"path": "__EXIT_PATH__"} }
+    }
+  ]
+}
