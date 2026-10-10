@@ -1,0 +1,6 @@
+{
+  // ==== DEFAULT OUTBOUND ====
+  "outbounds": [
+    { "type": "direct", "tag": "direct" }
+  ]
+}
