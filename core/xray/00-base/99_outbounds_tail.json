@@ -1,0 +1,7 @@
+{
+  // ==== DEFAULT OUTBOUNDS ====
+  "outbounds": [
+    { "tag": "direct", "protocol": "freedom", "settings": { "domainStrategy": "AsIs" } },
+    { "tag": "block", "protocol": "blackhole" }
+  ]
+}
