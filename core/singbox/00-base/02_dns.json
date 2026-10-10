@@ -1,0 +1,27 @@
+// ===========
+// MODERN DNS
+// ===========
+{
+  "dns": {
+    "servers": [
+      {
+        "tag": "cloudflare",
+        "type": "https",
+        "server": "cloudflare-dns.com",
+        "domain_resolver": "local"
+      },
+      {
+        "tag": "google",
+        "type": "https",
+        "server": "dns.google",
+        "domain_resolver": "local"
+      },
+      {
+        "tag": "local",
+        "type": "udp",
+        "server": "1.1.1.1"
+      }
+    ],
+    "final": "cloudflare"
+  }
+}
