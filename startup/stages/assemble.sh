@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+
 # === CONFIGURATION ASSEMBLY ===
 echo "[INIT] Assembling runtime configurations..."
 
@@ -12,13 +13,16 @@ cp "${APP_DIR}/core/xray/00-base/"*.json \
 
 for d in "${APP_DIR}"/core/xray/*-*/; do
   [ -d "$d" ] || continue
+  [ -f "$d/inbounds.json" ] || continue
 
   n="$(basename "$d")"
 
   cp "$d/inbounds.json" \
     "/etc/xray/conf/20_${n}_inbounds.json"
 
-  if [ -n "$EXIT_IP" ] && [ "${n%%-*}" = "$EXIT_PROTO" ]; then
+  if [ -n "$EXIT_IP" ] && \
+     [ "${n%%-*}" = "$EXIT_PROTO" ] && \
+     [ -f "$d/chain.json" ]; then
     cp "$d/chain.json" \
       "/etc/xray/conf/30_${n}_chain.json"
   fi
@@ -33,13 +37,16 @@ cp "${APP_DIR}/core/singbox/00-base/"*.json \
 
 for d in "${APP_DIR}"/core/singbox/*-*/; do
   [ -d "$d" ] || continue
+  [ -f "$d/inbounds.json" ] || continue
 
   n="$(basename "$d")"
 
   cp "$d/inbounds.json" \
     "/etc/singbox/conf/20_${n}_inbounds.json"
 
-  if [ -n "$EXIT_IP" ] && [ "${n%%-*}" = "$EXIT_PROTO" ]; then
+  if [ -n "$EXIT_IP" ] && \
+     [ "${n%%-*}" = "$EXIT_PROTO" ] && \
+     [ -f "$d/chain.json" ]; then
     cp "$d/chain.json" \
       "/etc/singbox/conf/30_${n}_chain.json"
   fi
