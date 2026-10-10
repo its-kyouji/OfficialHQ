@@ -1,0 +1,25 @@
+{
+  // ==== SHADOWSOCKS INBOUNDS ====
+  "inbounds": [
+    {
+      "tag": "ss-ws-in", "port": 10013, "listen": "127.0.0.1", "protocol": "shadowsocks",
+      "settings": { "method": "__IN_SS__", "password": "__IN_PASS__", "network": "tcp,udp" },
+      "streamSettings": { "network": "ws", "wsSettings": {"path": "__BASE_PATH__-x-ss-ws"} }
+    },
+    {
+      "tag": "ss-hu-in", "port": 10014, "listen": "127.0.0.1", "protocol": "shadowsocks",
+      "settings": { "method": "__IN_SS__", "password": "__IN_PASS__", "network": "tcp,udp" },
+      "streamSettings": { "network": "httpupgrade", "httpupgradeSettings": {"path": "__BASE_PATH__-x-ss-hu"} }
+    },
+    {
+      "tag": "ss-xh-in", "port": 10015, "listen": "127.0.0.1", "protocol": "shadowsocks",
+      "settings": { "method": "__IN_SS__", "password": "__IN_PASS__", "network": "tcp,udp" },
+      "streamSettings": { "network": "xhttp", "xhttpSettings": {"path": "__BASE_PATH__-x-ss-xh", "mode": "auto"} }
+    },
+    {
+      "tag": "ss-grpc-in", "port": 10016, "listen": "127.0.0.1", "protocol": "shadowsocks",
+      "settings": { "method": "__IN_SS__", "password": "__IN_PASS__", "network": "tcp,udp" },
+      "streamSettings": { "network": "grpc", "grpcSettings": {"serviceName": "__BASE_PATH__-x-ss-grpc"} }
+    }
+  ]
+}
