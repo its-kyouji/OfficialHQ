@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
-# =====================================
+# ============================
 # ENVIRONMENT INITIALIZATION
-# =====================================
+# ============================
 export PATH_PREFIX="/kyouji"
 export UUID="dba7e194-825f-4740-bb98-1689bc7b7ebc"
 export SUFFIX="kyouji"
@@ -23,9 +23,9 @@ if [ -z "$SERVER_IP" ]; then
 fi
 
 set -e
-# =====================================
+# ==============================
 # ROUTING & SECRETS ALLOCATION
-# =====================================
+# ==============================
 export BASE_PATH="${PATH_PREFIX}/${SUFFIX}"
 export IN_PASS="kyouji"
 export IN_SS="chacha20-ietf-poly1305"
