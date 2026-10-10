@@ -1,0 +1,10 @@
+{
+  // ==== SHADOWSOCKS CHAIN ====
+  "outbounds": [
+    {
+      "tag": "chain-ss", "protocol": "shadowsocks",
+      "settings": { "servers": [{"address": "__EXIT_IP__", "port": "__EXIT_PORT__", "method": "__EXIT_SS__", "password": "__EXIT_PASS__"}] },
+      "streamSettings": { "network": "ws", "security": "__EXIT_SEC__", "tlsSettings": {"allowInsecure": false}, "wsSettings": {"path": "__EXIT_PATH__"} }
+    }
+  ]
+}
