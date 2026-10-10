@@ -1,0 +1,6 @@
+{
+  "listen_port": 2222,
+  "target_host": "127.0.0.1",
+  "target_port": 2200,
+  "label": "SSH-Dropbear"
+}
