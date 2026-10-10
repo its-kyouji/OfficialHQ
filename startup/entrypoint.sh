@@ -24,8 +24,8 @@ python3 "${SCRIPT_DIR}/render.py"
 # === RUNTIME METADATA ===
 source "${STAGES_DIR}/metadata.sh"
 
-# === NETWORK INITIALIZATION ===
-source "${STAGES_DIR}/network.sh"
+# === BADVPN DNS RESOLVER ===
+source "${STAGES_DIR}/dns_resolver.sh"
 
 # === SSH INITIALIZATION ===
 source "${STAGES_DIR}/ssh.sh"
