@@ -1,0 +1,7 @@
+# =================
+# BRIDGE SETTINGS
+# =================
+BUF_SIZE = 262144
+IDLE_TIMEOUT = 600
+HANDSHAKE_TIMEOUT = 4.0
+HEADER_LIMIT = 16384
