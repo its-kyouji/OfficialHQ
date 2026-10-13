@@ -4,17 +4,17 @@
     {
       "type": "vmess", "tag": "s-vmess-ws-in", "listen": "127.0.0.1", "listen_port": 11004,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "ws", "path": "__BASE_PATH__-s-vmess-ws"}
+      "transport": {"type": "ws", "path": "__BASE_PATH__/s/vmess-ws"}
     },
     {
       "type": "vmess", "tag": "s-vmess-hu-in", "listen": "127.0.0.1", "listen_port": 11005,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__-s-vmess-hu"}
+      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__/s/vmess-hu"}
     },
     {
       "type": "vmess", "tag": "s-vmess-grpc-in", "listen": "127.0.0.1", "listen_port": 11006,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "grpc", "service_name": "__BASE_SVC__-s-vmess-grpc"}
+      "transport": {"type": "grpc", "service_name": "__BASE_SVC__/s/vmess-grpc"}
     }
   ]
 }
