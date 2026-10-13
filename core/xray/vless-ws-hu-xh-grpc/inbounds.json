@@ -18,7 +18,7 @@
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "__BASE_PATH__-x-vless-ws"
+          "path": "__BASE_PATH__/x/vless-ws"
         }
       },
       "sniffing": {
@@ -47,7 +47,7 @@
       "streamSettings": {
         "network": "httpupgrade",
         "httpupgradeSettings": {
-          "path": "__BASE_PATH__-x-vless-hu"
+          "path": "__BASE_PATH__/x/vless-hu"
         }
       },
       "sniffing": {
@@ -76,7 +76,7 @@
       "streamSettings": {
         "network": "xhttp",
         "xhttpSettings": {
-          "path": "__BASE_PATH__-x-vless-xh",
+          "path": "__BASE_PATH__/x/vless-xh",
           "mode": "auto"
         }
       },
@@ -106,7 +106,7 @@
       "streamSettings": {
         "network": "grpc",
         "grpcSettings": {
-          "serviceName": "__BASE_PATH__-x-vless-grpc"
+          "serviceName": "__BASE_PATH__/x/vless-grpc"
         }
       },
       "sniffing": {
