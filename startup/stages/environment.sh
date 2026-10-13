@@ -29,7 +29,7 @@ set -e
 # ==========================
 # CONNECTION PARAMETERS
 # ==========================
-export BASE_PATH="${PATH_PREFIX}/${SUFFIX}"
+export BASE_PATH="${PATH_PREFIX}${SUFFIX}"
 export IN_PASS="kyouji"
 export IN_SS="chacha20-ietf-poly1305"
 
