@@ -8,7 +8,7 @@ RAW_ROUTES = [
     (re.compile(re.escape(BASE_PREFIX) + rb"drop-(ws|hu)$"), 2222),
     (re.compile(re.escape(BASE_PREFIX) + rb"open-(ws|hu)$"), 2223),
     (re.compile(re.escape(BASE_PREFIX) + rb"ovpn-(ws|hu)$"), 2224),
-    (re.compile(re.escape(BASE_PREFIX) + rb"[xs]-[a-z]+-hu$"), 8083),
+    (re.compile(re.escape(BASE_PREFIX) + rb"[xs]/[a-z]+-hu$"), 8083),
 ]
 
 
