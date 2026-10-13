@@ -15,7 +15,7 @@ BACKEND_TIMEOUT = 10.0
 
 # === PROTOCOL CONSTANTS ===
 H2C_PREFACE = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"
-BASE_PREFIX = b"/kyouji/kyouji-"
+BASE_PREFIX = b"/kyouji/"
 
 # === FORTRESS POLICY ===
 DEFAULT_CONFIG = {
