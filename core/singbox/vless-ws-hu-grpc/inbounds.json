@@ -4,17 +4,17 @@
     {
       "type": "vless", "tag": "s-vless-ws-in", "listen": "127.0.0.1", "listen_port": 11001,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "ws", "path": "__BASE_PATH__-s-vless-ws"}
+      "transport": {"type": "ws", "path": "__BASE_PATH__/s/vless-ws"}
     },
     {
       "type": "vless", "tag": "s-vless-hu-in", "listen": "127.0.0.1", "listen_port": 11002,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__-s-vless-hu"}
+      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__/s/vless-hu"}
     },
     {
       "type": "vless", "tag": "s-vless-grpc-in", "listen": "127.0.0.1", "listen_port": 11003,
       "users": [{"uuid": "__UUID__"}],
-      "transport": {"type": "grpc", "service_name": "__BASE_SVC__-s-vless-grpc"}
+      "transport": {"type": "grpc", "service_name": "__BASE_SVC__/s/vless-grpc"}
     }
   ]
 }
