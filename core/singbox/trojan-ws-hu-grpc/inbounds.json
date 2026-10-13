@@ -4,17 +4,17 @@
     {
       "type": "trojan", "tag": "s-trojan-ws-in", "listen": "127.0.0.1", "listen_port": 11007,
       "users": [{"password": "__IN_PASS__"}],
-      "transport": {"type": "ws", "path": "__BASE_PATH__-s-trojan-ws"}
+      "transport": {"type": "ws", "path": "__BASE_PATH__/s/trojan-ws"}
     },
     {
       "type": "trojan", "tag": "s-trojan-hu-in", "listen": "127.0.0.1", "listen_port": 11008,
       "users": [{"password": "__IN_PASS__"}],
-      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__-s-trojan-hu"}
+      "transport": {"type": "httpupgrade", "path": "__BASE_PATH__/s/trojan-hu"}
     },
     {
       "type": "trojan", "tag": "s-trojan-grpc-in", "listen": "127.0.0.1", "listen_port": 11009,
       "users": [{"password": "__IN_PASS__"}],
-      "transport": {"type": "grpc", "service_name": "__BASE_SVC__-s-trojan-grpc"}
+      "transport": {"type": "grpc", "service_name": "__BASE_SVC__/s/trojan-grpc"}
     }
   ]
 }
