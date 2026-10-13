@@ -6,7 +6,7 @@ set -e
 # ==========================
 export PATH_PREFIX="/kyouji"
 export UUID="dba7e194-825f-4740-bb98-1689bc7b7ebc"
-export SUFFIX="kyouji"
+export SUFFIX=""
 # ==========================
 # EXTERNAL IP DETECTION
 # ==========================
