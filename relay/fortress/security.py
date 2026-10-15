@@ -1,24 +1,24 @@
 import time
 from collections import defaultdict
-# ================
+# =================
 # IP RATE LIMITING
-# ================
+# =================
 IP_HITS = defaultdict(list)
 BANNED_IPS = {}
 
-# ---- Cleanup tracking ----
 _LAST_CLEANUP = 0
 
-# ---- Clean stale IP records and expired bans ----
+
 def cleanup_stale_state(now):
     global _LAST_CLEANUP
 
+    # Run cleanup at most once every 60 seconds
     if now - _LAST_CLEANUP < 60:
         return
 
     _LAST_CLEANUP = now
 
-    # ---- Remove stale IP hit records ----
+    # Remove stale IP hit records
     stale_ips = [
         ip
         for ip, hits in IP_HITS.items()
@@ -28,7 +28,7 @@ def cleanup_stale_state(now):
     for ip in stale_ips:
         del IP_HITS[ip]
 
-    # ---- Remove expired IP bans ----
+    # Remove expired IP bans
     expired_ips = [
         ip
         for ip, expiry in BANNED_IPS.items()
@@ -38,8 +38,9 @@ def cleanup_stale_state(now):
     for ip in expired_ips:
         del BANNED_IPS[ip]
 
-# ---- Resolve client IP from request headers ----
+
 def get_client_ip(lines, fallback):
+    # Resolve client IP from forwarded headers
     for line in lines:
         if line.lower().startswith(b"x-forwarded-for:"):
             value = line.split(b":", 1)[1].strip()
@@ -51,14 +52,14 @@ def get_client_ip(lines, fallback):
 
     return fallback
 
-# ---- Check rate limits and apply temporary bans ----
+
 def is_banned(ip, ban_threshold, ban_time):
     now = time.time()
 
-    # ---- Run periodic cleanup ----
+    # Clean stale records and expired bans
     cleanup_stale_state(now)
 
-    # ---- Check existing ban ----
+    # Check whether the IP is still banned
     expiry = BANNED_IPS.get(ip)
 
     if expiry is not None:
@@ -67,7 +68,7 @@ def is_banned(ip, ban_threshold, ban_time):
         else:
             return True
 
-    # ---- Update the 60-second request window ----
+    # Update the 60-second request window
     hits = IP_HITS[ip]
 
     IP_HITS[ip] = [
@@ -77,8 +78,8 @@ def is_banned(ip, ban_threshold, ban_time):
     ]
 
     IP_HITS[ip].append(now)
-    
-    # ---- Apply ban when the threshold is exceeded ----
+
+    # Apply a temporary ban when the threshold is exceeded
     if len(IP_HITS[ip]) > ban_threshold:
         BANNED_IPS[ip] = now + ban_time
 
