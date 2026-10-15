@@ -29,13 +29,13 @@ from security import (
 
 from socket_utils import optimize_socket
 from relay import relay_stream
-
 # ==========================
 # CLIENT CONNECTION HANDLER
 # ==========================
 async def handle_client(reader, writer):
+    # Get remote peer address
     peer = writer.get_extra_info("peername")
-
+    # Set fallback client IP
     fallback_ip = (
         peer[0]
         if peer
@@ -48,6 +48,7 @@ async def handle_client(reader, writer):
     target_port = BACKEND_PORT
 
     try:
+        # Read initial client payload
         raw = await asyncio.wait_for(
             reader.read(65536),
             timeout=HEADER_TIMEOUT
@@ -56,16 +57,17 @@ async def handle_client(reader, writer):
         if not raw:
             raise ValueError("Empty payload")
 
-        # =================
+        # ===============
         # H2C CONNECTION
-        # =================
+        # ===============
         if raw.startswith(H2C_PREFACE):
             client_ip = fallback_ip
 
-        # =================
+        # ================
         # HTTP CONNECTION
-        # =================
+        # ================
         else:
+            # Read until HTTP headers are complete!
             while b"\r\n\r\n" not in raw:
                 more = await asyncio.wait_for(
                     reader.read(65536),
@@ -86,12 +88,27 @@ async def handle_client(reader, writer):
             if not lines:
                 raise ValueError("Malformed request")
 
-            # ============
+            # ==========
             # CLIENT IP
-            # ============
+            # ==========
             client_ip = get_client_ip(
                 lines[1:],
                 fallback_ip
+            )
+
+            # Debug proxy chain and resolved client IP
+            xff_values = [
+                line.split(b":", 1)[1].strip()
+                for line in lines[1:]
+                if line.lower().startswith(b"x-forwarded-for:")
+            ]
+
+            print(
+                f"[FORTRESS] XFF_DEBUG "
+                f"PEER={fallback_ip} "
+                f"XFF={xff_values!r} "
+                f"RESOLVED={client_ip}",
+                flush=True
             )
 
             if is_banned(
@@ -120,6 +137,7 @@ async def handle_client(reader, writer):
                     flush=True
                 )
 
+                # Return HTTP 403 for invalid paths
                 writer.write(
                     b"HTTP/1.1 403 Forbidden\r\n"
                     b"Connection: close\r\n"
@@ -138,10 +156,11 @@ async def handle_client(reader, writer):
                 BACKEND_PORT
             )
 
-        # ===================
+        # ================== 
         # BACKEND CONNECTION
-        # ===================
+        # ==================
         backend_reader, backend_writer = (
+        # Connect to selected backed    
             await asyncio.wait_for(
                 asyncio.open_connection(
                     BACKEND_HOST,
@@ -151,32 +170,38 @@ async def handle_client(reader, writer):
             )
         )
 
+        # Optimize client socket
         optimize_socket(
             writer.get_extra_info("socket")
         )
-
+        # Optimize backed socket
         optimize_socket(
             backend_writer.get_extra_info("socket")
         )
 
+        # Forward original client payload
         backend_writer.write(raw)
         await backend_writer.drain()
-
-        # ==================
+        
+        # =================
         # FULL-DUPLEX RELAY
-        # ==================
+        # =================
         await asyncio.gather(
+            # Client to backend
             relay_stream(reader, backend_writer),
+            # Backend to client
             relay_stream(backend_reader, writer),
             return_exceptions=True
         )
 
+    # Handle connection timeouts
     except asyncio.TimeoutError:
         print(
             f"[FORTRESS] Timeout IP={client_ip}",
             flush=True
         )
 
+    # Handle other connection errors
     except Exception as e:
         print(
             f"[FORTRESS] Dropped "
@@ -186,15 +211,18 @@ async def handle_client(reader, writer):
         )
 
     finally:
+        # Close backend connection
         if backend_writer:
             backend_writer.close()
-
+        # Close client connection
         writer.close()
 
-# =================
+
+# ===============
 # FORTRESS SERVER
-# =================
+# ===============
 async def main():
+    # Start server listener
     server = await asyncio.start_server(
         handle_client,
         "0.0.0.0",
@@ -212,13 +240,13 @@ async def main():
 
     async with server:
         await server.serve_forever()
-
-# =====================
+# ====================
 # CONTAINER ENTRYPOINT
-# =====================
+# ====================
 if __name__ == "__main__":
     import gc
 
+    # Set garbage collection thresholds
     gc.set_threshold(50_000, 500, 100)
 
     try:
