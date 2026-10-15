@@ -45,9 +45,9 @@ def get_client_ip(lines, fallback):
             value = line.split(b":", 1)[1].strip()
 
             if value:
-                return value.split(
+                return value.rsplit(
                     b",", 1
-                )[0].strip().decode("utf-8", "ignore")
+                )[-1].strip().decode("utf-8", "ignore")
 
     return fallback
 
