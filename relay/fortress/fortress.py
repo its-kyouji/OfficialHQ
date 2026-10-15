@@ -29,12 +29,14 @@ from security import (
 
 from socket_utils import optimize_socket
 from relay import relay_stream
+
 # ==========================
 # CLIENT CONNECTION HANDLER
 # ==========================
 async def handle_client(reader, writer):
     # Get remote peer address
     peer = writer.get_extra_info("peername")
+
     # Set fallback client IP
     fallback_ip = (
         peer[0]
@@ -67,7 +69,7 @@ async def handle_client(reader, writer):
         # HTTP CONNECTION
         # ================
         else:
-            # Read until HTTP headers are complete!
+            # Read until the HTTP headers are complete
             while b"\r\n\r\n" not in raw:
                 more = await asyncio.wait_for(
                     reader.read(65536),
@@ -94,21 +96,6 @@ async def handle_client(reader, writer):
             client_ip = get_client_ip(
                 lines[1:],
                 fallback_ip
-            )
-
-            # Debug proxy chain and resolved client IP
-            xff_values = [
-                line.split(b":", 1)[1].strip()
-                for line in lines[1:]
-                if line.lower().startswith(b"x-forwarded-for:")
-            ]
-
-            print(
-                f"[FORTRESS] XFF_DEBUG "
-                f"PEER={fallback_ip} "
-                f"XFF={xff_values!r} "
-                f"RESOLVED={client_ip}",
-                flush=True
             )
 
             if is_banned(
@@ -156,11 +143,11 @@ async def handle_client(reader, writer):
                 BACKEND_PORT
             )
 
-        # ================== 
+        # ==================
         # BACKEND CONNECTION
         # ==================
         backend_reader, backend_writer = (
-        # Connect to selected backed    
+            # Connect to the selected backend
             await asyncio.wait_for(
                 asyncio.open_connection(
                     BACKEND_HOST,
@@ -174,7 +161,8 @@ async def handle_client(reader, writer):
         optimize_socket(
             writer.get_extra_info("socket")
         )
-        # Optimize backed socket
+
+        # Optimize backend socket
         optimize_socket(
             backend_writer.get_extra_info("socket")
         )
@@ -182,7 +170,7 @@ async def handle_client(reader, writer):
         # Forward original client payload
         backend_writer.write(raw)
         await backend_writer.drain()
-        
+
         # =================
         # FULL-DUPLEX RELAY
         # =================
@@ -214,6 +202,7 @@ async def handle_client(reader, writer):
         # Close backend connection
         if backend_writer:
             backend_writer.close()
+
         # Close client connection
         writer.close()
 
@@ -240,6 +229,7 @@ async def main():
 
     async with server:
         await server.serve_forever()
+
 # ====================
 # CONTAINER ENTRYPOINT
 # ====================
@@ -255,8 +245,12 @@ if __name__ == "__main__":
         asyncio.set_event_loop_policy(
             uvloop.EventLoopPolicy()
         )
+        print("[FORTRESS] uvloop ACTIVE", flush=True)
 
     except ImportError:
-        pass
+        print(
+            "[FORTRESS] uvloop MISSING (asyncio fallback)",
+            flush=True
+        )
 
     asyncio.run(main())
