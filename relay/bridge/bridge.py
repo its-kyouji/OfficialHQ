@@ -14,6 +14,7 @@ from handshake import handle_handshake
 async def handle_client(client_reader, client_writer, cfg):
     label = cfg.get("label", "UNKNOWN")
 
+    # Process the client handshake
     leftover = await handle_handshake(
         client_reader,
         client_writer,
@@ -23,6 +24,7 @@ async def handle_client(client_reader, client_writer, cfg):
     if leftover is None:
         return
 
+    # Connect to the configured upstream
     try:
         ssh_reader, ssh_writer = await asyncio.open_connection(
             cfg["target_host"],
@@ -40,13 +42,16 @@ async def handle_client(client_reader, client_writer, cfg):
         client_writer.close()
         return
 
+    # Optimize both connection sockets
     optimize_socket(client_writer.get_extra_info("socket"))
     optimize_socket(ssh_writer.get_extra_info("socket"))
 
+    # Forward any data left after the handshake
     if leftover:
         ssh_writer.write(leftover)
         await ssh_writer.drain()
 
+    # Forward traffic in both directions
     await asyncio.gather(
         relay(
             client_reader,
@@ -61,16 +66,19 @@ async def handle_client(client_reader, client_writer, cfg):
         return_exceptions=True
     )
 
-# =================
+
+# ===============
 # BRIDGE SERVER
-# =================
+# ===============
 async def main():
+    # Require the JSON configuration path
     if len(sys.argv) < 2:
         print("[BRIDGE] FATAL: Missing JSON config path", flush=True)
         sys.exit(1)
 
     json_path = sys.argv[1]
 
+    # Load the bridge configuration
     try:
         with open(json_path, "r") as f:
             cfg = json.load(f)
@@ -82,6 +90,7 @@ async def main():
         )
         sys.exit(1)
 
+    # Skip bridges without an upstream target
     if not cfg.get("target_host"):
         print(
             f"[BRIDGE:{cfg.get('label', '?')}] "
@@ -90,6 +99,7 @@ async def main():
         )
         sys.exit(0)
 
+    # Start the local bridge listener
     server = await asyncio.start_server(
         lambda r, w: handle_client(r, w, cfg),
         "127.0.0.1",
@@ -107,14 +117,25 @@ async def main():
     async with server:
         await server.serve_forever()
 
-# =======================
+
+# =====================
 # CONTAINER ENTRYPOINT
-# =======================
+# =====================
 if __name__ == "__main__":
+    # Enable uvloop when available
     try:
         import uvloop
+
         uvloop.install()
+        print(
+            f"[BRIDGE] uvloop ACTIVE ({sys.argv[1:]})",
+            flush=True
+        )
+
     except ImportError:
-        pass
+        print(
+            f"[BRIDGE] uvloop MISSING (asyncio fallback) ({sys.argv[1:]})",
+            flush=True
+        )
 
     asyncio.run(main())
