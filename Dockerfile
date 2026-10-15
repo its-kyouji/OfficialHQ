@@ -35,7 +35,7 @@ ENV DEBIAN_FRONTEND="noninteractive"
 
 # ==== SYSTEM DEPENDENCIES ====
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl unzip python3 nginx haproxy caddy ca-certificates openssh-server \
+    curl unzip python3 python3-uvloop nginx haproxy caddy ca-certificates openssh-server \
     debian-keyring debian-archive-keyring apt-transport-https netcat-openbsd gnupg \
     supervisor \
     && curl -sL 'https://apt.envoyproxy.io/signing.key' | gpg --dearmor -o /usr/share/keyrings/envoy-keyring.gpg \
