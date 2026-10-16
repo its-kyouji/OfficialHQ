@@ -1,22 +1,19 @@
 import re
 
 from config import BASE_PREFIX, ALLOWED_PATHS
-
-=== RAW PATH ROUTING ===
-
+# =================
+# RAW PATH ROUTING
+# =================
 RAW_ROUTES = [
 # ==== SSH DROPBEAR ====
 (re.compile(re.escape(BASE_PREFIX) + rb"drop-(ws|hu)$"), 2222),
 (re.compile(re.escape(BASE_PREFIX) + rb"drop-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2222),
-
 # ==== SSH OPENSSH ====
 (re.compile(re.escape(BASE_PREFIX) + rb"open-(ws|hu)$"), 2223),
 (re.compile(re.escape(BASE_PREFIX) + rb"open-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2223),
-
 # ==== OPENVPN ====
 (re.compile(re.escape(BASE_PREFIX) + rb"ovpn-(ws|hu)$"), 2224),
-
-# ==== X-RAY / SING-BOX HTTP UPGRADE ====
+# ==== XRAY / SINGBOX HTTPUPGRADE ====
 (re.compile(re.escape(BASE_PREFIX) + rb"[xs]/[a-z]+-hu$"), 8083),
 
 ]
