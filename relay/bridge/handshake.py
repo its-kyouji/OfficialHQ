@@ -28,9 +28,18 @@ async def handle_handshake(client_reader, client_writer, label):
         header_end = raw.index(b"\r\n\r\n") + 4
         leftover = raw[header_end:]
 
+        # Custom XH path detection
+        req_line = raw.split(b"\r\n", 1)[0].split(b" ")
+        req_path = (
+            req_line[1].split(b"?", 1)[0]
+            if len(req_line) > 1 else b""
+        )
+        is_xh = req_path.endswith(b"-xh")
+
         if (
             b"upgrade: websocket" in raw.lower()
             or b"upgrade: http/1.1" in raw.lower()
+            or is_xh
         ):
             date_str = formatdate(
                 timeval=None,
