@@ -5,25 +5,26 @@ from config import BASE_PREFIX, ALLOWED_PATHS
 # RAW PATH ROUTING
 # =================
 RAW_ROUTES = [
-# ==== SSH DROPBEAR ====
-(re.compile(re.escape(BASE_PREFIX) + rb"drop-(ws|hu)$"), 2222),
-(re.compile(re.escape(BASE_PREFIX) + rb"drop-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2222),
-# ==== SSH OPENSSH ====
-(re.compile(re.escape(BASE_PREFIX) + rb"open-(ws|hu)$"), 2223),
-(re.compile(re.escape(BASE_PREFIX) + rb"open-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2223),
-# ==== OPENVPN ====
-(re.compile(re.escape(BASE_PREFIX) + rb"ovpn-(ws|hu)$"), 2224),
-# ==== XRAY / SINGBOX HTTPUPGRADE ====
-(re.compile(re.escape(BASE_PREFIX) + rb"[xs]/[a-z]+-hu$"), 8083),
-
+    # ==== SSH DROPBEAR ====
+    (re.compile(re.escape(BASE_PREFIX) + rb"drop-(ws|hu)$"), 2222),
+    (re.compile(re.escape(BASE_PREFIX) + rb"drop-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2222),
+    # ==== SSH OPENSSH ====
+    (re.compile(re.escape(BASE_PREFIX) + rb"open-(ws|hu)$"), 2223),
+    (re.compile(re.escape(BASE_PREFIX) + rb"open-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"), 2223),
+    # ==== OPENVPN ====
+    (re.compile(re.escape(BASE_PREFIX) + rb"ovpn-(ws|hu)$"), 2224),
+    # ==== XRAY / SINGBOX HTTPUPGRADE ====
+    (re.compile(re.escape(BASE_PREFIX) + rb"[xs]/[a-z]+-hu$"), 8083),
 ]
 
+
 def validate_path(request_path):
-return request_path in ALLOWED_PATHS or request_path.startswith(BASE_PREFIX)
+    return request_path in ALLOWED_PATHS or request_path.startswith(BASE_PREFIX)
+
 
 def resolve_backend(request_path, default_port):
-for pattern, port in RAW_ROUTES:
-if pattern.match(request_path):
-return port
+    for pattern, port in RAW_ROUTES:
+        if pattern.match(request_path):
+            return port
 
-return default_port
+    return default_port
