@@ -2,6 +2,7 @@ import asyncio
 from email.utils import formatdate
 
 from config import HANDSHAKE_TIMEOUT, HEADER_LIMIT
+
 # =================
 # HTTP HANDSHAKE
 # =================
@@ -36,17 +37,32 @@ async def handle_handshake(client_reader, client_writer, label):
         )
         is_xh = req_path.endswith(b"-xh")
 
-        if (
+        has_upgrade = (
             b"upgrade: websocket" in raw.lower()
             or b"upgrade: http/1.1" in raw.lower()
-            or is_xh
-        ):
-            date_str = formatdate(
-                timeval=None,
-                localtime=False,
-                usegmt=True
+        )
+
+        date_str = formatdate(
+            timeval=None,
+            localtime=False,
+            usegmt=True
+        )
+
+        # Custom XH: HTTP 200 without Upgrade
+        if is_xh and not has_upgrade:
+            client_writer.write(
+                b"HTTP/1.1 200 OK\r\n"
+                b"Content-Type: application/octet-stream\r\n"
+                b"Cache-Control: no-store\r\n"
+                b"Date: " + date_str.encode() + b"\r\n"
+                b"\r\n"
             )
 
+            await client_writer.drain()
+            return leftover
+
+        # Existing Upgrade handshake
+        if has_upgrade or is_xh:
             client_writer.write(
                 b"HTTP/1.1 101 Switching Protocols\r\n"
                 b"Upgrade: websocket\r\n"
