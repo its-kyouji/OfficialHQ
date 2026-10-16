@@ -114,6 +114,12 @@ async def handle_client(reader, writer):
             if len(request_line) < 2:
                 raise ValueError("Malformed request line")
 
+            # Diagnostic: log the incoming HTTP request line
+            print(
+                f"[FORTRESS] REQ {lines[0][:80]!r}",
+                flush=True
+            )
+
             request_path = request_line[1].split(b"?", 1)[0]
 
             if not validate_path(request_path):
@@ -229,6 +235,7 @@ async def main():
 
     async with server:
         await server.serve_forever()
+
 
 # ====================
 # CONTAINER ENTRYPOINT
