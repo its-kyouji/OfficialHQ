@@ -34,7 +34,7 @@ async def handle_client(client_reader, client_writer, cfg):
             and "upgrade" not in headers
         )
 
-        if is_xh_post:
+        if is_cxh_post:
             await handle_xh(
                 client_reader, client_writer, method, clean_path, headers, cfg
             )
