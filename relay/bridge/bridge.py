@@ -11,8 +11,8 @@ from relay import relay
 from handshake import handle_handshake, read_request_headers, parse_request_headers
 from xh import handle_xh
 
-XH_PATH_RE = re.compile(
-    r"/(?:open|drop)-xh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"
+CXH_PATH_RE = re.compile(
+    r"/(?:open|drop)-cxh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"
 )
 
 # ==========================
@@ -27,9 +27,9 @@ async def handle_client(client_reader, client_writer, cfg):
         method, path, _version, headers = parse_request_headers(raw_headers)
         clean_path = path.split("?", 1)[0]
 
-        is_xh_path = XH_PATH_RE.search(clean_path) is not None
-        is_xh_post = (
-            is_xh_path
+        is_cxh_path = CXH_PATH_RE.search(clean_path) is not None
+        is_cxh_post = (
+            is_cxh_path
             and method.upper() == "POST"
             and "upgrade" not in headers
         )
