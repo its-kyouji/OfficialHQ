@@ -13,6 +13,7 @@ _FORBIDDEN_TRAILERS = {
     b"connection", b"content-length", b"host", b"trailer",
     b"transfer-encoding", b"upgrade",
 }
+
 # ======================
 # HTTP RESPONSE HELPERS
 # ======================
@@ -32,7 +33,9 @@ async def _send_error(client_writer, status, reason, extra_headers=b""):
         await asyncio.wait_for(client_writer.drain(), timeout=HANDSHAKE_TIMEOUT)
     except Exception:
         pass
-# ========================
+
+
+# ========================  
 # CHUNKED REQUEST DECODER
 # ========================
 async def _copy_chunked_request_body(client_reader, ssh_writer):
@@ -45,16 +48,25 @@ async def _copy_chunked_request_body(client_reader, ssh_writer):
         )
         if not line:
             raise ConnectionError("EOF while reading HTTP chunk size")
+            
+        # [DIAGNOSTIC] Check kung SSH banner or HTTP bytes ang nabasa
+        if line.startswith(b"SSH-"):
+            print(f"[BRIDGE:WARNING] CHUNK DECODER read SSH banner instead of hex size: {line!r}", flush=True)
+
         if len(line) > CHUNK_LINE_LIMIT or not line.endswith(b"\r\n"):
+            print(f"[BRIDGE:WARNING] Invalid chunk line size/format: {line[:100]!r}", flush=True)
             raise ValueError("Invalid or oversized HTTP chunk-size line")
 
         size_token = line[:-2].split(b";", 1)[0]
         if not size_token or any(
             c not in b"0123456789abcdefABCDEF" for c in size_token
         ):
+            print(f"[BRIDGE:CXH-DIAG] INVALID CHUNK SIZE line={line[:100]!r}", flush=True)
             raise ValueError("Invalid HTTP chunk size")
 
         size = int(size_token, 16)
+        print(f"[BRIDGE:CXH-DIAG] CHUNK SIZE parsed={size}", flush=True)
+        
         if size > MAX_CHUNK_SIZE:
             raise ValueError("HTTP chunk size exceeds limit")
 
@@ -134,6 +146,10 @@ async def _stream_ssh_response(ssh_reader, client_writer):
 async def handle_xh(client_reader, client_writer, method, path, headers, cfg):
     """Handle one chunked POST tunnel to an SSH TCP upstream."""
     label = cfg.get("label", "XH")
+    
+    # [DIAGNOSTIC] Log the exact headers reaching the bridge
+    print(f"[BRIDGE:{label}] CXH INCOMING POST -> Path: {path} | Headers: {headers}", flush=True)
+    
     ssh_reader = ssh_writer = None
     upload_task = download_task = None
     response_started = False
@@ -141,19 +157,25 @@ async def handle_xh(client_reader, client_writer, method, path, headers, cfg):
     try:
         # Validate request framing before opening the upstream.
         if method.upper() != "POST":
+            print(f"[BRIDGE:{label}] CXH REJECT 405 -> Method not POST", flush=True)
             await _send_error(
                 client_writer, 405, "Method Not Allowed", b"Allow: POST\r\n"
             )
             return
         if "content-length" in headers:
+            print(f"[BRIDGE:{label}] CXH REJECT 400 -> content-length detected", flush=True)
             await _send_error(client_writer, 400, "Bad Request")
             return
         if headers.get("transfer-encoding", "").strip().lower() != "chunked":
+            print(f"[BRIDGE:{label}] CXH REJECT 411 -> missing chunked encoding", flush=True)
             await _send_error(client_writer, 411, "Length Required")
             return
         if not cfg.get("target_host"):
+            print(f"[BRIDGE:{label}] CXH REJECT 502 -> missing target_host config", flush=True)
             await _send_error(client_writer, 502, "Bad Gateway")
             return
+
+        print(f"[BRIDGE:{label}] CXH VALIDATION PASSED -> Connecting to upstream...", flush=True)
 
         # Connect to SSH upstream.
         try:
@@ -212,12 +234,18 @@ async def handle_xh(client_reader, client_writer, method, path, headers, cfg):
             done, _ = await asyncio.wait(
                 active, return_when=asyncio.FIRST_COMPLETED
             )
+            
+            # [DIAGNOSTIC] Log Task statuses
             for task in done:
+                task_name = task.get_name()
                 if task.cancelled():
+                    print(f"[BRIDGE:{label}] CXH TASK CANCELLED: {task_name}", flush=True)
                     continue
                 error = task.exception()
                 if error is not None:
+                    print(f"[BRIDGE:{label}] CXH TASK FAILED: {task_name}: {type(error).__name__}: {error}", flush=True)
                     raise error
+                print(f"[BRIDGE:{label}] CXH TASK COMPLETED: {task_name}", flush=True)
 
             # If SSH closes its response stream, stop the upload too.
             if download_task in done:
@@ -254,4 +282,4 @@ async def handle_xh(client_reader, client_writer, method, path, headers, cfg):
                 if writer is not None
             ),
             return_exceptions=True,
-                    )
+        )
