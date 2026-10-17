@@ -12,8 +12,9 @@ from handshake import handle_handshake, read_request_headers, parse_request_head
 from xh import handle_xh
 
 CXH_PATH_RE = re.compile(
-    r"/(?:open|drop)-cxh(?:/[A-Za-z0-9_-]+(?:/[0-9]+)?)?$"
+    r"/(?:open|drop)-cxh(?:/([A-Za-z0-9_-]+)(?:/([0-9]+))?)?$"
 )
+
 
 # ==========================
 # CLIENT CONNECTION HANDLER
@@ -27,18 +28,27 @@ async def handle_client(client_reader, client_writer, cfg):
         method, path, _version, headers = parse_request_headers(raw_headers)
         clean_path = path.split("?", 1)[0]
 
-        is_cxh_path = CXH_PATH_RE.search(clean_path) is not None
-        is_cxh_post = (
-            is_cxh_path
-            and method.upper() == "POST"
-            and "upgrade" not in headers
-        )
+        cxh_match = CXH_PATH_RE.search(clean_path)
+        has_upgrade = "upgrade" in headers
+        method_upper = method.upper()
 
-        if is_cxh_post:
-            await handle_xh(
-                client_reader, client_writer, method, clean_path, headers, cfg
-            )
-            return
+        # Route CXH packet-up requests:
+        # - GET /.../(open|drop)-cxh/<sid> (without Upgrade)
+        # - POST /.../(open|drop)-cxh[/<sid>[/<seq>]] (without Upgrade)
+        if cxh_match is not None and not has_upgrade:
+            sid_group = cxh_match.group(1)
+            if method_upper == "POST" or (
+                method_upper == "GET" and sid_group is not None
+            ):
+                await handle_xh(
+                    client_reader,
+                    client_writer,
+                    method_upper,
+                    clean_path,
+                    headers,
+                    cfg,
+                )
+                return
 
     except asyncio.CancelledError:
         raise
